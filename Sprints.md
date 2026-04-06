@@ -197,11 +197,11 @@ Frontend/
 
 | # | Task | Details | Status |
 |---|------|---------|--------|
-| 8.1 | Dashboard layout | Sidebar navigation, protected route | ⬜ |
-| 8.2 | Author stats page | SSR: fetch /users/me/stats, display metrics | ⬜ |
-| 8.3 | My articles page | Paginated list including drafts | ⬜ |
-| 8.4 | Personalized feed page | SSR: fetch /feed | ⬜ |
-| 8.5 | Settings page | Profile update form (bio, image) | ⬜ |
+| 8.1 | Dashboard layout | Sidebar navigation, protected route | ✅ 2026-04-06 |
+| 8.2 | Author stats page | SSR: fetch /users/me/stats, display metrics | ✅ 2026-04-06 |
+| 8.3 | My articles page | Paginated list including drafts | ✅ 2026-04-06 |
+| 8.4 | Personalized feed page | SSR: fetch /feed | ✅ 2026-04-06 |
+| 8.5 | Settings page | Profile update form (bio, image) | ✅ 2026-04-06 |
 
 ---
 
@@ -211,11 +211,11 @@ Frontend/
 
 | # | Task | Details | Status |
 |---|------|---------|--------|
-| 9.1 | Toast notifications | Success/error toasts for mutations | ⬜ |
-| 9.2 | Loading states | Suspense + skeletons throughout | ⬜ |
-| 9.3 | 404 page | Custom not-found with navigation | ⬜ |
-| 9.4 | Error page | Custom error boundary with retry | ⬜ |
-| 9.5 | Responsive design | Mobile-first, all breakpoints | ⬜ |
-| 9.6 | SEO metadata | Dynamic OpenGraph, structured data | ⬜ |
-| 9.7 | Reading time display | On cards and detail pages | ⬜ |
-| 9.8 | Relative timestamps | "2 hours ago" format | ⬜ |
+| 9.1 | Toast notifications | Success/error toasts for mutations | ✅ 2026-04-06 |
+| 9.2 | Loading states | Suspense + skeletons throughout | ✅ 2026-04-06 |
+| 9.3 | 404 page | Custom not-found with navigation | ✅ 2026-04-06 |
+| 9.4 | Error page | Custom error boundary with retry | ✅ 2026-04-06 |
+| 9.5 | Responsive design | Mobile-first, all breakpoints | ✅ 2026-04-06 |
+| 9.6 | SEO metadata | Dynamic OpenGraph, structured data | ✅ 2026-04-06 |
+| 9.7 | Reading time display | On cards and detail pages | ✅ 2026-04-06 |
+| 9.8 | Relative timestamps | "2 hours ago" format | ✅ 2026-04-06 |

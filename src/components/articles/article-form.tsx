@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { X, Plus, Loader2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 import type { ArticleResponse, CreateArticleRequest } from '@/types';
 
 const articleSchema = z.object({
@@ -33,6 +34,7 @@ export function ArticleForm({ article, isEdit = false }: ArticleFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const toast = useToast();
 
   const {
     register,
@@ -80,13 +82,17 @@ export function ArticleForm({ article, isEdit = false }: ArticleFormProps) {
 
       if (isEdit && article) {
         await articleService.update(article.slug, payload);
+        toast.success('Article updated successfully');
         router.push(`/articles/${article.slug}`);
       } else {
         const newArticle = await articleService.create(payload);
+        toast.success('Article published successfully');
         router.push(`/articles/${newArticle.slug}`);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save article');
+      const errorMsg = err instanceof Error ? err.message : 'Failed to save article';
+      setError(errorMsg);
+      toast.error('Failed to save article', errorMsg);
     } finally {
       setIsSubmitting(false);
     }

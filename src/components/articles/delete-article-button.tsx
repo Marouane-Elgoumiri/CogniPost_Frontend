@@ -16,6 +16,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Trash2, Loader2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface DeleteArticleButtonProps {
   articleSlug: string;
@@ -26,16 +27,19 @@ export function DeleteArticleButton({ articleSlug, articleTitle }: DeleteArticle
   const [isDeleting, setIsDeleting] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
+  const toast = useToast();
 
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
       await articleService.delete(articleSlug);
       setIsOpen(false);
+      toast.success('Article deleted successfully');
       router.push('/my-articles');
       router.refresh();
     } catch (error) {
       console.error('Failed to delete article:', error);
+      toast.error('Failed to delete article');
     } finally {
       setIsDeleting(false);
     }

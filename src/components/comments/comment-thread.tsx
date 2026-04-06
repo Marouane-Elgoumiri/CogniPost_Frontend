@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { formatRelativeTime } from '@/lib/utils';
 import { MessageSquare, Trash2, Reply } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface CommentThreadProps {
   comments: import('@/types').CommentResponse[];
@@ -146,6 +147,7 @@ function CommentForm({ articleSlug, parentId, onSuccess, onCancel }: CommentForm
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
   const router = useRouter();
+  const toast = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -156,10 +158,13 @@ function CommentForm({ articleSlug, parentId, onSuccess, onCancel }: CommentForm
     try {
       await commentService.create(articleSlug, { body, parentId });
       setBody('');
+      toast.success(parentId ? 'Reply posted' : 'Comment posted');
       onSuccess?.();
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to submit comment');
+      const errorMsg = err instanceof Error ? err.message : 'Failed to submit comment';
+      setError(errorMsg);
+      toast.error('Failed to submit comment');
     } finally {
       setIsSubmitting(false);
     }

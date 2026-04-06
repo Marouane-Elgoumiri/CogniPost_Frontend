@@ -22,6 +22,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {
       title: `${article.title} | CogniPost`,
       description: article.subtitle || article.body.slice(0, 160),
+      openGraph: {
+        title: article.title,
+        description: article.subtitle || article.body.slice(0, 160),
+        type: 'article',
+        publishedTime: article.createdAt,
+        authors: [article.author.username],
+        tags: article.tags.map((t) => t.name),
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: article.title,
+        description: article.subtitle || article.body.slice(0, 160),
+      },
     };
   } catch {
     return { title: 'Article Not Found | CogniPost' };

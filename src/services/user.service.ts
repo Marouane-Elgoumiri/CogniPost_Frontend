@@ -6,11 +6,11 @@ export const userService = {
     return api.get<UserResponse>(`/users/${id}`);
   },
 
-  getMe: (token: string) => {
-    return api.get<UserResponse>('/users/me', { token });
+  getMe: () => {
+    return api.get<UserResponse>('/api/users/me');
   },
 
-  getStats: (token: string) => {
-    return api.get<UserStatsResponse>('/users/me/stats', { token });
+  getStats: () => {
+    return api.get<UserStatsResponse>('/api/users/me/stats');
   },
 };

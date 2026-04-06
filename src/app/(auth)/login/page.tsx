@@ -43,10 +43,10 @@ export default function LoginPage() {
         return;
       }
 
-      const json = await res.json();
-      setUser(json.data.user);
-      router.push('/');
-      router.refresh();
+    const json = await res.json();
+    setUser(json.data.user);
+    router.push('/dashboard');
+    router.refresh();
     } catch {
       setError('Something went wrong');
     } finally {

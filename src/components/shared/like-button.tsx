@@ -6,6 +6,7 @@ import { useAuth } from '@/context/auth.context';
 import { interactionService } from '@/services/interaction.service';
 import { Button } from '@/components/ui/button';
 import { Heart } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface LikeButtonProps {
   slug: string;
@@ -20,6 +21,7 @@ export function LikeButton({ slug, initialLiked, initialCount, size = 'md' }: Li
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
   const router = useRouter();
+  const toast = useToast();
 
   const sizeClasses = {
     sm: 'h-8 px-2.5 text-xs gap-1',
@@ -46,15 +48,17 @@ export function LikeButton({ slug, initialLiked, initialCount, size = 'md' }: Li
     setLiked(optimisticLiked);
     setCount(optimisticCount);
 
-    try {
-      const result = await interactionService.toggleLike(slug);
-      setLiked(result.action);
-      setCount(result.count);
-      router.refresh();
-    } catch {
-      setLiked(liked);
-      setCount(count);
-    } finally {
+  try {
+    const result = await interactionService.toggleLike(slug);
+    setLiked(result.action);
+    setCount(result.count);
+    toast.success(result.action ? 'Article liked' : 'Article unliked');
+    router.refresh();
+  } catch {
+    setLiked(liked);
+    setCount(count);
+    toast.error('Failed to update like');
+  } finally {
       setIsLoading(false);
     }
   };

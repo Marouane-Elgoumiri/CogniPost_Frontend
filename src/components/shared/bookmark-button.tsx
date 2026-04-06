@@ -6,6 +6,7 @@ import { useAuth } from '@/context/auth.context';
 import { interactionService } from '@/services/interaction.service';
 import { Button } from '@/components/ui/button';
 import { Bookmark } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface BookmarkButtonProps {
   slug: string;
@@ -18,6 +19,7 @@ export function BookmarkButton({ slug, initialBookmarked, size = 'md' }: Bookmar
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
   const router = useRouter();
+  const toast = useToast();
 
   const sizeClasses = {
     sm: 'h-8 w-8 p-0',
@@ -41,12 +43,15 @@ export function BookmarkButton({ slug, initialBookmarked, size = 'md' }: Bookmar
     const optimisticBookmarked = !bookmarked;
     setBookmarked(optimisticBookmarked);
 
-    try {
-      await interactionService.toggleBookmark(slug);
-      router.refresh();
-    } catch {
-      setBookmarked(bookmarked);
-    } finally {
+  try {
+    const result = await interactionService.toggleBookmark(slug);
+    setBookmarked(result.action);
+    toast.success(result.action ? 'Article bookmarked' : 'Bookmark removed');
+    router.refresh();
+  } catch {
+    setBookmarked(bookmarked);
+    toast.error('Failed to update bookmark');
+  } finally {
       setIsLoading(false);
     }
   };
