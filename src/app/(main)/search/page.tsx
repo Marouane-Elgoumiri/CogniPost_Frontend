@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { articleService } from '@/services/article.service';
+import { articleServerService } from '@/services/server/article.server';
 import { ArticleCard } from '@/components/articles/article-card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -21,34 +21,42 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 }
 
 async function SearchResults({ params }: { params: { q?: string; tag?: string; author?: string; page: number } }) {
-  const data = await articleService.search({
-    q: params.q,
-    tag: params.tag,
-    author: params.author,
-    page: params.page,
-    size: 10,
-  });
+	try {
+		const data = await articleServerService.search({
+      q: params.q,
+      tag: params.tag,
+      author: params.author,
+      page: params.page,
+      size: 10,
+    });
 
-  if (!data.content.length) {
+    if (!data?.content?.length) {
+      return (
+        <div className="text-center py-16 text-muted-foreground">
+          <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
+          <p className="text-lg">No articles found matching your search.</p>
+          <p className="text-sm mt-2">Try different keywords or browse all articles.</p>
+        </div>
+      );
+    }
+
+    return (
+      <>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {data.content.map((article) => (
+            <ArticleCard key={article.id} article={article} />
+          ))}
+        </div>
+        <Pagination page={params.page} totalPages={data.totalPages} basePath="/search" />
+      </>
+    );
+  } catch {
     return (
       <div className="text-center py-16 text-muted-foreground">
-        <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
-        <p className="text-lg">No articles found matching your search.</p>
-        <p className="text-sm mt-2">Try different keywords or browse all articles.</p>
+        <p>Unable to search articles. Please try again later.</p>
       </div>
     );
   }
-
-  return (
-    <>
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {data.content.map((article) => (
-          <ArticleCard key={article.id} article={article} />
-        ))}
-      </div>
-      <Pagination page={params.page} totalPages={data.totalPages} basePath="/search" />
-    </>
-  );
 }
 
 function SearchResultsSkeleton() {

@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { feedService } from '@/services/feed.service';
+import { feedServerService } from '@/services/server/feed.server';
 import { ArticleCard } from '@/components/articles/article-card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -14,15 +14,15 @@ export const metadata: Metadata = {
 };
 
 async function FeedList() {
-  let articles: ArticleResponse[] = [];
-  try {
-    const data = await feedService.getFeed({ page: 0, size: 20 });
-    articles = data.content;
-  } catch (error) {
-    console.error('Failed to fetch feed:', error);
-  }
+	let articles: ArticleResponse[] = [];
+	try {
+		const data = await feedServerService.getFeed({ page: 0, size: 20 });
+		articles = data?.content || [];
+	} catch (error) {
+		console.error('Failed to fetch feed:', error);
+	}
 
-  if (!articles.length) {
+  if (!articles?.length) {
     return (
       <div className="text-center py-16">
         <Rss className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />

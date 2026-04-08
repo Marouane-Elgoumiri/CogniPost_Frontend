@@ -3,25 +3,23 @@ import { API_URL } from '@/lib/constants';
 
 export async function GET(req: NextRequest) {
   try {
-    const accessToken = req.cookies.get('accessToken')?.value;
-
-    if (!accessToken) {
-      return NextResponse.json(
-        { message: 'Unauthorized', status: 401 },
-        { status: 401 }
-      );
-    }
-
     const { searchParams } = new URL(req.url);
+    const q = searchParams.get('q') || '';
+    const tag = searchParams.get('tag') || '';
+    const author = searchParams.get('author') || '';
     const page = searchParams.get('page') || '0';
     const size = searchParams.get('size') || '10';
 
-    const res = await fetch(`${API_URL}/feed?page=${page}&size=${size}`, {
+    const params = new URLSearchParams();
+    if (q) params.set('q', q);
+    if (tag) params.set('tag', tag);
+    if (author) params.set('author', author);
+    params.set('page', page);
+    params.set('size', size);
+
+    const res = await fetch(`${API_URL}/articles/search?${params.toString()}`, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`,
-      },
+      headers: { 'Content-Type': 'application/json' },
     });
 
     if (!res.ok) {

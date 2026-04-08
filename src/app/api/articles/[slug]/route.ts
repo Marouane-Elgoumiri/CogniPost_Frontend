@@ -1,27 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { API_URL } from '@/lib/constants';
 
-export async function GET(req: NextRequest) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { slug: string } }
+) {
   try {
     const accessToken = req.cookies.get('accessToken')?.value;
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
 
-    if (!accessToken) {
-      return NextResponse.json(
-        { message: 'Unauthorized', status: 401 },
-        { status: 401 }
-      );
+    if (accessToken) {
+      headers['Authorization'] = `Bearer ${accessToken}`;
     }
 
-    const { searchParams } = new URL(req.url);
-    const page = searchParams.get('page') || '0';
-    const size = searchParams.get('size') || '10';
-
-    const res = await fetch(`${API_URL}/feed?page=${page}&size=${size}`, {
+    const res = await fetch(`${API_URL}/articles/${params.slug}`, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`,
-      },
+      headers,
     });
 
     if (!res.ok) {

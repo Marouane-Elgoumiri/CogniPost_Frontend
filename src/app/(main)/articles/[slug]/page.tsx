@@ -2,11 +2,11 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { articleService } from '@/services/article.service';
-import { commentService } from '@/services/comment.service';
+import { articleServerService } from '@/services/server/article.server';
+import { commentServerService } from '@/services/server/comment.server';
 import { Badge } from '@/components/ui/badge';
 import { formatRelativeTime } from '@/lib/utils';
-import { Clock, Eye, Heart, MessageSquare, Bookmark } from 'lucide-react';
+import { Clock, Eye, Heart, MessageSquare, Bookmark, FileEdit } from 'lucide-react';
 import Link from 'next/link';
 import { CommentsSection } from '@/components/comments/comments-section';
 import { LikeButton } from '@/components/shared/like-button';
@@ -17,9 +17,9 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  try {
-    const article = await articleService.getBySlug(params.slug);
-    return {
+	try {
+		const article = await articleServerService.getArticleBySlug(params.slug);
+		return {
       title: `${article.title} | CogniPost`,
       description: article.subtitle || article.body.slice(0, 160),
       openGraph: {
@@ -42,18 +42,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ArticlePage({ params }: Props) {
-  let article;
-  let comments = [];
-  try {
-    article = await articleService.getBySlug(params.slug);
-    comments = await commentService.getByArticle(params.slug);
-  } catch {
+	let article;
+	let comments = [];
+	try {
+		article = await articleServerService.getArticleBySlug(params.slug);
+		comments = await commentServerService.getByArticle(params.slug);
+	} catch {
     notFound();
   }
 
   return (
     <article className="container mx-auto px-4 py-8 max-w-3xl">
       <header className="mb-8">
+        {article.status === 'DRAFT' && (
+          <div className="mb-4 p-3 bg-yellow-100 dark:bg-yellow-900/30 border border-yellow-300 dark:border-yellow-700 rounded-md flex items-center gap-2 text-yellow-800 dark:text-yellow-200">
+            <FileEdit className="h-4 w-4" />
+            <span className="text-sm font-medium">This is a draft article - only you can see it</span>
+          </div>
+        )}
         <div className="flex flex-wrap gap-2 mb-4">
           {article.tags.map((tag) => (
             <Link key={tag.slug} href={`/tags/${tag.slug}`}>

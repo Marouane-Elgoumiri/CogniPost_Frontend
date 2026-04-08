@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { ArticleCard } from '@/components/articles/article-card';
-import { articleService } from '@/services/article.service';
+import { articleServerService } from '@/services/server/article.server';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Pagination } from '@/components/shared/pagination';
 import { Suspense } from 'react';
@@ -11,26 +11,34 @@ export const metadata: Metadata = {
 };
 
 async function ArticleList({ page }: { page: number }) {
-  const data = await articleService.getAll({ page, size: 10, sort: 'createdAt,desc' });
+	try {
+		const data = await articleServerService.getAll({ page, size: 10, sort: 'createdAt,desc' });
 
-  if (!data.content.length) {
+    if (!data?.content?.length) {
+      return (
+        <div className="text-center py-16 text-muted-foreground">
+          <p>No articles yet. Be the first to write one!</p>
+        </div>
+      );
+    }
+
+    return (
+      <>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {data.content.map((article) => (
+            <ArticleCard key={article.id} article={article} />
+          ))}
+        </div>
+        <Pagination page={page} totalPages={data.totalPages} />
+      </>
+    );
+  } catch {
     return (
       <div className="text-center py-16 text-muted-foreground">
-        <p>No articles yet. Be the first to write one!</p>
+        <p>Unable to load articles. Please try again later.</p>
       </div>
     );
   }
-
-  return (
-    <>
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {data.content.map((article) => (
-          <ArticleCard key={article.id} article={article} />
-        ))}
-      </div>
-      <Pagination page={page} totalPages={data.totalPages} />
-    </>
-  );
 }
 
 function ArticleListSkeleton() {

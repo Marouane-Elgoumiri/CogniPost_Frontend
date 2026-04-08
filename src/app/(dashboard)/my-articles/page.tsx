@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { articleService } from '@/services/article.service';
+import { articleServerService } from '@/services/server/article.server';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { formatRelativeTime } from '@/lib/utils';
@@ -14,15 +14,15 @@ export const metadata: Metadata = {
 };
 
 async function MyArticlesList() {
-  let articles: ArticleResponse[] = [];
-  try {
-    const data = await articleService.getMyArticles();
-    articles = data.content;
-  } catch (error) {
-    console.error('Failed to fetch articles:', error);
-  }
+	let articles: ArticleResponse[] = [];
+	try {
+		const data = await articleServerService.getMyArticles();
+		articles = data?.content || [];
+	} catch (error) {
+		console.error('Failed to fetch articles:', error);
+	}
 
-  if (!articles.length) {
+  if (!articles?.length) {
     return (
       <div className="text-center py-16">
         <p className="text-muted-foreground mb-4">You haven&apos;t written any articles yet.</p>

@@ -18,7 +18,7 @@ interface CommentThreadProps {
 }
 
 export function CommentThread({ comments, articleSlug, currentUserId, onDelete }: CommentThreadProps) {
-  if (!comments.length) {
+  if (!comments?.length) {
     return (
       <div className="text-center py-8 text-muted-foreground">
         <MessageSquare className="h-8 w-8 mx-auto mb-2 opacity-50" />
@@ -118,7 +118,7 @@ function CommentItem({ comment, articleSlug, currentUserId, onDelete, depth }: C
               />
             </div>
           )}
-          {comment.replies.length > 0 && (
+                {comment.replies?.length > 0 && (
             <div className="mt-4">
               <CommentThread
                 comments={comment.replies}

@@ -16,8 +16,8 @@ export async function GET(
       return NextResponse.json(error, { status: res.status });
     }
 
-    const data = await res.json();
-    return NextResponse.json(data);
+    const json = await res.json();
+    return NextResponse.json(json.data || json);
   } catch {
     return NextResponse.json(
       { message: 'Internal server error', status: 500 },
@@ -55,8 +55,8 @@ export async function POST(
       return NextResponse.json(error, { status: res.status });
     }
 
-    const data = await res.json();
-    return NextResponse.json(data);
+    const json = await res.json();
+    return NextResponse.json(json.data || json);
   } catch {
     return NextResponse.json(
       { message: 'Internal server error', status: 500 },

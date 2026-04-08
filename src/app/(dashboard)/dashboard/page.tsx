@@ -1,8 +1,6 @@
 import { Metadata } from 'next';
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { API_URL } from '@/lib/constants';
-import { userService } from '@/services/user.service';
+import { userServerService } from '@/services/server/user.server';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { FileText, Eye, Heart, Users, BookOpen } from 'lucide-react';
 import { QuickActions } from '@/components/dashboard/quick-actions';
@@ -14,38 +12,18 @@ export const metadata: Metadata = {
 };
 
 async function getCurrentUser() {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get('accessToken')?.value;
-
-  if (!accessToken) {
-    return null;
-  }
-
-  try {
-    const res = await fetch(`${API_URL}/users/me`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`,
-      },
-    });
-
-    if (!res.ok) {
-      return null;
-    }
-
-    const data = await res.json();
-    return data.data;
-  } catch {
-    return null;
-  }
+	try {
+		return await userServerService.getMe();
+	} catch {
+		return null;
+	}
 }
 
 async function StatsCards() {
-  let stats;
-  try {
-    stats = await userService.getStats();
-  } catch (error) {
+	let stats;
+	try {
+		stats = await userServerService.getStats();
+	} catch (error) {
     console.error('Failed to fetch stats:', error);
     return (
       <div className="text-center py-8 text-muted-foreground">

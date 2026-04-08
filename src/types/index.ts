@@ -119,17 +119,19 @@ export interface FollowResponse {
 }
 
 export interface CreateArticleRequest {
-  title: string;
-  subtitle?: string;
-  body: string;
-  tags?: string[];
+	title: string;
+	subtitle?: string;
+	body: string;
+	tags?: string[];
+	status?: 'DRAFT' | 'PUBLISHED';
 }
 
 export interface UpdateArticleRequest {
-  title?: string;
-  subtitle?: string;
-  body?: string;
-  tags?: string[];
+	title?: string;
+	subtitle?: string;
+	body?: string;
+	tags?: string[];
+	status?: 'DRAFT' | 'PUBLISHED';
 }
 
 export interface CreateCommentRequest {

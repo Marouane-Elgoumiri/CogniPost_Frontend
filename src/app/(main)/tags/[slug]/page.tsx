@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { tagService } from '@/services/tag.service';
-import { articleService } from '@/services/article.service';
+import { tagServerService } from '@/services/server/tag.server';
+import { articleServerService } from '@/services/server/article.server';
 import { ArticleCard } from '@/components/articles/article-card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -15,8 +15,8 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  try {
-    const tag = await tagService.getBySlug(params.slug);
+	try {
+		const tag = await tagServerService.getBySlug(params.slug);
     return {
       title: `${tag.name} Articles | CogniPost`,
       description: `Articles tagged with ${tag.name}`,
@@ -27,26 +27,34 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 async function TagArticles({ slug, page }: { slug: string; page: number }) {
-  const data = await articleService.search({ tag: slug, page, size: 10 });
+	try {
+		const data = await articleServerService.search({ tag: slug, page, size: 10 });
 
-  if (!data.content.length) {
+    if (!data?.content?.length) {
+      return (
+        <div className="text-center py-16 text-muted-foreground">
+          <p>No articles found for this tag.</p>
+        </div>
+      );
+    }
+
+    return (
+      <>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {data.content.map((article) => (
+            <ArticleCard key={article.id} article={article} />
+          ))}
+        </div>
+        <Pagination page={page} totalPages={data.totalPages} basePath={`/tags/${slug}`} />
+      </>
+    );
+  } catch {
     return (
       <div className="text-center py-16 text-muted-foreground">
-        <p>No articles found for this tag.</p>
+        <p>Unable to load articles. Please try again later.</p>
       </div>
     );
   }
-
-  return (
-    <>
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {data.content.map((article) => (
-          <ArticleCard key={article.id} article={article} />
-        ))}
-      </div>
-      <Pagination page={page} totalPages={data.totalPages} basePath={`/tags/${slug}`} />
-    </>
-  );
 }
 
 function TagArticlesSkeleton() {
@@ -65,9 +73,9 @@ function TagArticlesSkeleton() {
 }
 
 export default async function TagDetailPage({ params, searchParams }: Props) {
-  let tag;
-  try {
-    tag = await tagService.getBySlug(params.slug);
+	let tag;
+	try {
+		tag = await tagServerService.getBySlug(params.slug);
   } catch {
     notFound();
   }

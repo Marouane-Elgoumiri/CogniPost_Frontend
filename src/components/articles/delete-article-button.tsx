@@ -19,20 +19,20 @@ import { Trash2, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface DeleteArticleButtonProps {
-  articleSlug: string;
-  articleTitle: string;
+	articleSlug: string;
+	articleTitle: string;
 }
 
 export function DeleteArticleButton({ articleSlug, articleTitle }: DeleteArticleButtonProps) {
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-  const router = useRouter();
-  const toast = useToast();
+	const [isDeleting, setIsDeleting] = useState(false);
+	const [isOpen, setIsOpen] = useState(false);
+	const router = useRouter();
+	const toast = useToast();
 
-  const handleDelete = async () => {
-    setIsDeleting(true);
-    try {
-      await articleService.delete(articleSlug);
+	const handleDelete = async () => {
+		setIsDeleting(true);
+		try {
+			await articleService.delete(articleSlug);
       setIsOpen(false);
       toast.success('Article deleted successfully');
       router.push('/my-articles');

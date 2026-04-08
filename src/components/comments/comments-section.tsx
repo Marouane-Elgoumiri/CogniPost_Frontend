@@ -13,7 +13,7 @@ interface CommentsSectionProps {
 }
 
 export function CommentsSection({ articleSlug, initialComments, currentUserId }: CommentsSectionProps) {
-  const [comments, setComments] = useState<CommentResponse[]>(initialComments);
+  const [comments, setComments] = useState<CommentResponse[]>(initialComments || []);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -49,7 +49,7 @@ export function CommentsSection({ articleSlug, initialComments, currentUserId }:
 
   return (
     <div className="mt-12 pt-6 border-t">
-      <h2 className="text-xl font-semibold mb-6">Comments ({comments.length})</h2>
+      <h2 className="text-xl font-semibold mb-6">Comments ({comments?.length || 0})</h2>
       <div className="mb-8">
         <CommentForm articleSlug={articleSlug} onSuccess={handleCommentCreated} />
       </div>

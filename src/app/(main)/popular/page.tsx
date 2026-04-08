@@ -1,19 +1,29 @@
 import { Metadata } from 'next';
 import { ArticleCard } from '@/components/articles/article-card';
-import { articleService } from '@/services/article.service';
+import { articleServerService } from '@/services/server/article.server';
 
 export const metadata: Metadata = {
-  title: 'Popular Articles | CogniPost',
-  description: 'Most viewed articles on CogniPost',
+	title: 'Popular Articles | CogniPost',
+	description: 'Most viewed articles on CogniPost',
 };
 
 export default async function PopularPage() {
-  const articles = await articleService.getPopular();
+	let articles;
+	try {
+		articles = await articleServerService.getPopular();
+  } catch {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold tracking-tight mb-8">Popular Articles</h1>
+        <p className="text-center py-16 text-muted-foreground">Unable to load articles. Please try again later.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold tracking-tight mb-8">Popular Articles</h1>
-      {!articles.length ? (
+      {!articles?.length ? (
         <p className="text-center py-16 text-muted-foreground">No popular articles yet.</p>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

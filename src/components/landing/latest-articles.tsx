@@ -4,23 +4,31 @@ import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 
 async function ArticlesGrid() {
-  const data = await articleService.getAll({ page: 0, size: 6, sort: 'createdAt,desc' });
+  try {
+    const data = await articleService.getAll({ page: 0, size: 6, sort: 'createdAt,desc' });
 
-  if (!data.content.length) {
+    if (!data?.content?.length) {
+      return (
+        <div className="text-center py-12 text-muted-foreground">
+          <p>No articles yet. Be the first to write one!</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {data.content.map((article) => (
+          <ArticleCard key={article.id} article={article} />
+        ))}
+      </div>
+    );
+  } catch {
     return (
       <div className="text-center py-12 text-muted-foreground">
-        <p>No articles yet. Be the first to write one!</p>
+        <p>Unable to load articles. Please try again later.</p>
       </div>
     );
   }
-
-  return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {data.content.map((article) => (
-        <ArticleCard key={article.id} article={article} />
-      ))}
-    </div>
-  );
 }
 
 function ArticlesSkeleton() {

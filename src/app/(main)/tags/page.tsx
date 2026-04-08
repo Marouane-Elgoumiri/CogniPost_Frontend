@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { tagService } from '@/services/tag.service';
+import { tagServerService } from '@/services/server/tag.server';
 import { Badge } from '@/components/ui/badge';
 
 export const metadata: Metadata = {
@@ -9,12 +9,22 @@ export const metadata: Metadata = {
 };
 
 export default async function TagsPage() {
-  const tags = await tagService.getAll();
+	let tags;
+	try {
+		tags = await tagServerService.getAll();
+  } catch {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold tracking-tight mb-8">Tags</h1>
+        <p className="text-center py-16 text-muted-foreground">Unable to load tags. Please try again later.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold tracking-tight mb-8">Tags</h1>
-      {!tags.length ? (
+      {!tags?.length ? (
         <p className="text-center py-16 text-muted-foreground">No tags yet.</p>
       ) : (
         <div className="flex flex-wrap gap-2">
